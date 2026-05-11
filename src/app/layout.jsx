@@ -7,7 +7,7 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
 });
 export const metadata = {
   title: {
-    default: "TrendWa | عبايات سورية فاخرة وتسوق أونلاين",
+    title: "TrendWa | Online Syrian Shop | متجر سوري أونلاين",
     template: "%s | TrendWa",
   },
 
@@ -66,7 +66,7 @@ export const metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "TrendWa | عبايات سورية",
+   title: "TrendWa | Online Syrian Shop | متجر سوري أونلاين",
     description:
       "متجر إلكتروني للعبايات السورية والأزياء النسائية الفاخرة.",
     images: ["/logo.png"],
