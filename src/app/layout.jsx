@@ -7,7 +7,7 @@ const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
 });
 export const metadata = {
   title: {
-    title: "TrendWa | Online Syrian Shop | متجر سوري أونلاين",
+    title: "TrendWa |تريند وا",
     template: "%s | TrendWa",
   },
 
