@@ -52,10 +52,18 @@ export default function DashboardPage() {
     async function loadData() {
       try {
         const token = localStorage.getItem("admin_token");
-        const userRaw = localStorage.getItem("admin_user");
-        const user = userRaw ? JSON.parse(userRaw) : null;
+        if (!token) {
+          router.replace("/login");
+          return;
+        }
 
-        if (!token || user?.role !== "ADMIN") {
+        const sessionResponse = await fetch("/api/auth/admin-session", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const sessionResult = await sessionResponse.json();
+        if (!sessionResponse.ok || !sessionResult?.success) {
+          localStorage.removeItem("admin_token");
+          localStorage.removeItem("admin_user");
           router.replace("/login");
           return;
         }

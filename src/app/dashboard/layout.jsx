@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { syncCurrencySettingsFromServer } from "@/lib/currency";
 
 function HomeIcon() {
@@ -44,10 +44,67 @@ function CartIcon() {
 }
 
 export default function DashboardLayout({ children }) {
+  const router = useRouter();
   const pathname = usePathname();
+  const [isAllowed, setIsAllowed] = useState(false);
+  const [checked, setChecked] = useState(false);
+
   useEffect(() => {
     syncCurrencySettingsFromServer();
   }, []);
+
+  useEffect(() => {
+    async function verifyAdminSession() {
+      const token = localStorage.getItem("admin_token");
+      const rawUser = localStorage.getItem("admin_user");
+
+      if (!token || !rawUser) {
+        setIsAllowed(false);
+        setChecked(true);
+        router.replace("/login");
+        return;
+      }
+
+      try {
+        const user = JSON.parse(rawUser);
+        if (user?.role !== "ADMIN") {
+          setIsAllowed(false);
+          setChecked(true);
+          router.replace("/login");
+          return;
+        }
+
+        const response = await fetch("/api/auth/admin-session", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const result = await response.json();
+        if (!response.ok || !result?.success) {
+          localStorage.removeItem("admin_token");
+          localStorage.removeItem("admin_user");
+          setIsAllowed(false);
+          setChecked(true);
+          router.replace("/login");
+          return;
+        }
+
+        setIsAllowed(true);
+        setChecked(true);
+      } catch {
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_user");
+        setIsAllowed(false);
+        setChecked(true);
+        router.replace("/login");
+      }
+    }
+
+    verifyAdminSession();
+  }, [router]);
+
+  if (!checked || !isAllowed) {
+    return null;
+  }
+
   const items = [
     { label: "الرئيسية", href: "/dashboard", icon: <HomeIcon /> },
     { label: "المنتجات", href: "/dashboard/products", icon: <BoxIcon /> },
