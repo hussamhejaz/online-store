@@ -5,6 +5,7 @@ import {
   hashPassword,
   jsonResponse,
   normalizeEmail,
+  normalizeSecretAnswer,
   sanitizeUser,
 } from "@/lib/auth";
 
@@ -17,12 +18,14 @@ export async function POST(request) {
     const name = `${firstName} ${lastName}`.trim();
     const email = normalizeEmail(body.email);
     const password = String(body.password || "");
+    const secretQuestion = String(body.secretQuestion || "").trim();
+    const secretAnswer = String(body.secretAnswer || "").trim();
 
-    if (!firstName || !lastName || !phone || !email || !password) {
+    if (!firstName || !lastName || !phone || !email || !password || !secretQuestion || !secretAnswer) {
       return jsonResponse(
         {
           success: false,
-          message: "First name, last name, phone, email, and password are required.",
+          message: "First name, last name, phone, email, password, secret question, and secret answer are required.",
         },
         400,
       );
@@ -52,6 +55,8 @@ export async function POST(request) {
         name,
         email,
         password: await hashPassword(password),
+        secretQuestion,
+        secretAnswerHash: await hashPassword(normalizeSecretAnswer(secretAnswer)),
         role: USER_ROLES.USER,
       },
     });
@@ -89,6 +94,14 @@ export async function POST(request) {
       return jsonResponse({ success: false, message: "Invalid JSON body." }, 400);
     }
 
-    return jsonResponse({ success: false, message: "Unable to register user." }, 500);
+    const details =
+      typeof error?.message === "string" && error.message.trim()
+        ? error.message.trim()
+        : "Unable to register user.";
+
+    return jsonResponse(
+      { success: false, message: `Register failed: ${details}` },
+      500,
+    );
   }
 }

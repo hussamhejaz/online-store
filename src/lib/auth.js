@@ -30,6 +30,13 @@ export function normalizeEmail(email) {
     .toLowerCase();
 }
 
+export function normalizeSecretAnswer(answer) {
+  return String(answer || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+}
+
 export function sanitizeUser(user) {
   if (!user) {
     return null;
