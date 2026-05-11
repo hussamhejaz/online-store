@@ -46,7 +46,7 @@ export const metadata = {
   metadataBase: new URL("https://trendwa.com"),
 
   openGraph: {
-    title: "TrendWa | عبايات سورية فاخرة",
+    title: "TrendWa | Online Syrian Shop | متجر سوري أونلاين",
     description:
       "اكتشف أحدث العبايات السورية والأزياء النسائية الفاخرة مع TrendWa.",
     url: "https://trend-wa.com",
