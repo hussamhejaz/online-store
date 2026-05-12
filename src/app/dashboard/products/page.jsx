@@ -353,6 +353,8 @@ export default function ProductsPage() {
       if (!token) {
         return;
       }
+      const parsedVariants =
+        form.productType === "VARIANT" ? flattenGroupsToVariants(form.colorGroups) : null;
 
       const response = await fetch(`/api/products/${editingId}`, {
         method: "PUT",
@@ -369,7 +371,7 @@ export default function ProductsPage() {
           stock: form.stock,
           image: form.image,
           images: form.images.slice(0, MAX_GALLERY_IMAGES),
-          variants: form.productType === "VARIANT" ? flattenGroupsToVariants(form.colorGroups) : [],
+          ...(parsedVariants ? { variants: parsedVariants } : {}),
           categoryId: form.categoryId,
           isActive: form.isActive,
         }),

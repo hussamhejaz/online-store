@@ -266,6 +266,8 @@ export default function NewProductPage() {
 
     try {
       const token = localStorage.getItem("admin_token");
+      const parsedVariants =
+        form.productType === "VARIANT" ? flattenGroupsToVariants(form.colorGroups) : null;
       const response = await fetch("/api/products", {
         method: "POST",
         headers: {
@@ -281,7 +283,7 @@ export default function NewProductPage() {
           stock: form.stock,
           image: form.image,
           images: form.images.slice(0, MAX_GALLERY_IMAGES),
-          variants: form.productType === "VARIANT" ? flattenGroupsToVariants(form.colorGroups) : [],
+          ...(parsedVariants ? { variants: parsedVariants } : {}),
           categoryId: form.categoryId,
           isActive: form.isActive,
         }),
